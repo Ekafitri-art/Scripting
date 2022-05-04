@@ -1,0 +1,15 @@
+set lines 300
+col owner for a20
+col directory_name for a30
+col directory_path for a70
+select owner, directory_name, directory_path from dba_directories;
+
+=====================================================================
+
+set lines 300
+col owner for a20
+col directory_name for a30
+col directory_path for a70
+select owner, directory_name, directory_path from dba_directories where directory_name like 'MIGRASI';
+
+/u02/dpump/lina

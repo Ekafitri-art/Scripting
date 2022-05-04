@@ -1,0 +1,36 @@
+Select   ddf.TABLESPACE_NAME "TABLESPACE",
+  ddf.MAXBYTES "MAXSIZE (MB)",
+         (ddf.BYTES - dfs.bytes) "USED (MB)",
+         ddf.MAXBYTES-(ddf.BYTES - dfs.bytes) "FREE (MB)",
+         round(((ddf.BYTES - dfs.BYTES)/ddf.MAXBYTES)*100,2) "USED %"
+from    (select TABLESPACE_NAME,
+round(sum(BYTES)/1024/1024,2) bytes,
+         round(sum(decode(autoextensible,'NO',BYTES,MAXBYTES))/1024/1024,2) maxbytes
+         from   dba_data_files
+group  by TABLESPACE_NAME) ddf,
+        (select TABLESPACE_NAME,
+                round(sum(BYTES)/1024/1024,2) bytes
+         from   dba_free_space
+         group  by TABLESPACE_NAME) dfs
+where    ddf.TABLESPACE_NAME=dfs.TABLESPACE_NAME 
+ order by "USED %" ASC ;
+ 
+=====================================
+Cek TABLESPACE based on Time
+
+Select   ddf.TABLESPACE_NAME "TABLESPACE",
+         ddf.MAXBYTES "MAXSIZE (MB)",
+         (ddf.BYTES - dfs.bytes) "C",
+         ddf.MAXBYTES-(ddf.BYTES - dfs.bytes) "FREE (MB)",
+         round(((ddf.BYTES - dfs.BYTES)/ddf.MAXBYTES)*100,2) "% USED"
+from    (select TABLESPACE_NAME,
+         round(sum(BYTES)/1024/1024,2) bytes,
+         round(sum(decode(autoextensible,'NO',BYTES,MAXBYTES))/1024/1024,2) maxbytes
+         from   dba_data_files
+         group  by TABLESPACE_NAME) ddf,
+        (select TABLESPACE_NAME,
+                round(sum(BYTES)/1024/1024,2) bytes
+         from   dba_free_space
+         group  by TABLESPACE_NAME) dfs
+where    ddf.TABLESPACE_NAME=dfs.TABLESPACE_NAME
+and  ddf.TABLESPACE_NAME like '%2021%' order by "TABLESPACE" asc ;

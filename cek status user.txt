@@ -1,0 +1,6 @@
+set lines 200
+col username for a32
+col account_status for a32
+col create for a16
+col profile for a32
+select username, created,profile, account_status from dba_users where username like 'SYSTEM';

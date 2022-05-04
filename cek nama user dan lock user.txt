@@ -1,0 +1,3 @@
+SELECT username FROM all_users where username like 'ANUGERAH_Y_TRISSANDA1_X';
+
+alter user ANUGERAH_Y_TRISSANDA1_X account lock;

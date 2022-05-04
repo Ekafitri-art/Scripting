@@ -1,0 +1,30 @@
+Cek serial dari session dg query:
+SQL> select sid, serial# from gv$session where sid=<Insert the SID>;
+select inst_id, sid, serial# from gv$session where serial#=40107;
+
+=============================================================================================================
+Cek Instance_ID dari SID yang dimaksud dengan query:
+SQL> select SID,SERIAL#,INST_ID from gv$session where SID = <Insert the SID>;
+select SID,SERIAL#,INST_ID from gv$session where SID = 180;
+select SID,SERIAL#,INST_ID from gv$session where SID = 5263;
+
+
+=============================================================================================================
+Cara Kill session:
+-Single instance
+SQL> alter system kill session 'SID,SERIAL#' immediate;
+alter system kill session '5370,7642' immediate;
+
+-Double instance
+SQL> select SID,SERIAL#,INST_ID from gv$session where SID = <Insert the SID>;
+alter system kill session '4582,34320,@1' immediate;
+alter system kill session '20432,10743,@2' immediate;
+alter system kill session '15667,46931,@2' immediate;
+
+Holder:  486	  40720    1 01:38:04 INACTIVE 18-FEB-22 9hncsuaj3c7ng	      (6)Exclusive    (0)None	      TX     2
+
+
+
+
+kemudian cek lagi LOCKING dengan query pertama pastikan 'no row selected'
+SQL> select sid, serial#, username, inst_id, status, server, sql_id from gv$session where sid=<Insert the SID>;

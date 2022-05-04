@@ -1,0 +1,9 @@
+Cek jumlah row user or table (after import dll)
+
+select /*+ parallel 4 */ count (*) from PREPRDP_OMS_USER_NEW.DATA_MODEL;
+
+select count (*) from EDWPRODE_T3D_MDL.KPI_REVENUE_PURGED;
+
+                                         owner.nama table
+										 
+select count (*) from db_data_file;

@@ -1,0 +1,8 @@
+Cek lob segment:
+
+
+SELECT owner, table_name, column_name, segment_name, bytes/1024/1024 MB  FROM dba_segments a JOIN dba_lobs b USING (owner, segment_name) WHERE 
+  b.table_name in ('TRANSACTION_MANAGER');
+  
+SELECT owner, table_name, column_name, segment_name, bytes/1024/1024 MB  FROM dba_segments a JOIN dba_lobs b USING (owner, segment_name) WHERE 
+  b.table_name=('B2B_TRANSACTION') and owner=('C2P_PROD');

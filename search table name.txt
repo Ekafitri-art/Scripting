@@ -1,0 +1,83 @@
+Cek size table include index
+
+COLUMN TABLE_NAME FORMAT A32
+COLUMN OBJECT_NAME FORMAT A32
+COLUMN OWNER FORMAT A20
+
+SELECT
+   owner, 
+   table_name, 
+   TRUNC(sum(bytes)/1024/1024) Meg,
+   ROUND( ratio_to_report( sum(bytes) ) over () * 100) Percent
+FROM
+(SELECT segment_name table_name, owner, bytes
+ FROM dba_segments
+ WHERE segment_type IN ('TABLE', 'TABLE PARTITION', 'TABLE SUBPARTITION')
+ UNION ALL
+ SELECT i.table_name, i.owner, s.bytes
+ FROM dba_indexes i, dba_segments s
+ WHERE s.segment_name = i.index_name
+ AND   s.owner = i.owner
+ AND   s.segment_type IN ('INDEX', 'INDEX PARTITION', 'INDEX SUBPARTITION')
+ UNION ALL
+ SELECT l.table_name, l.owner, s.bytes
+ FROM dba_lobs l, dba_segments s
+ WHERE s.segment_name = l.segment_name
+ AND   s.owner = l.owner
+ AND   s.segment_type IN ('LOBSEGMENT', 'LOB PARTITION')
+ UNION ALL
+ SELECT l.table_name, l.owner, s.bytes
+ FROM dba_lobs l, dba_segments s
+ WHERE s.segment_name = l.index_name
+ AND   s.owner = l.owner
+ AND   s.segment_type = 'LOBINDEX')
+WHERE owner = 'DGPOS'
+AND table_name in (
+'PENDING_TASK'
+)
+GROUP BY table_name, owner
+HAVING SUM(bytes)/1024/1024 > 1  /* Ignore really small tables */
+ORDER BY SUM(bytes) desc;
+
+=================================================================================
+set lines 300
+col owner for a32
+col table_name for a32
+SELECT owner,table_name,tablespace_name FROM dba_tables where owner in ('WHITELIST_RO') and table_name in ('BYU_ACTIVE_STATUS');
+
+
+set lines 300
+col owner for a32
+col table_name for a32
+SELECT owner,table_name FROM dba_tables where table_name in ('TRACK_LOGIN_2022');
+
+=============================================================
+try to check view (if no table was found)
+ARADMIN.HPD_HELP_DESK
+
+select view_name from dba_views where owner in ('APPS');
+
+To check view
+set lines 999
+set pages 999
+col owner for a32
+col view_name for a20
+col text for a80
+select owner, view_name,text from dba_views where view_name in ('BYU_ACTIVE_STATUS');
+
+TELKOMSEL.TCRPS105V
+=======================================================
+To know history on table
+SELECT TABLE_OWNER, 
+   TABLE_NAME, 
+   INSERTS,
+   UPDATES,
+   DELETES,
+   TIMESTAMP AS 'LAST_CHANGE'
+FROM  DBA_TAB_MODIFICATIONS
+WHERE table_owner='$table_owner' and table_name='$table_name';
+TO_CHAR(TIMESTAMP,'DD/MM/YYYY') = TO_CHAR(sysdate,'DD/MM/YYYY') 
+ORDER BY LAST_CHANGE DESC;
+=======================================
+Check creation date table
+select object_name,created from all_objects where object_type = 'TABLE' and owner = 'SCV_LOAD_USR' and object_name = 'CB_MULTIDIM_2021_12_27';

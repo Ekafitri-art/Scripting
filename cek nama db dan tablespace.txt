@@ -1,0 +1,6 @@
+select inst_id, name, open_mode, database_role from gv$DATABASE;
+
+select instance_name, status, host_name from gv$instance;
+
+select name from v$database;
+

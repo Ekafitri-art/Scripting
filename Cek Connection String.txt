@@ -1,0 +1,26 @@
+Masuk ke direktori
+/apps/oracle/product/client_11g/network/admin
+
+cd $ORACLE_HOME//network/admin
+
+Cari (ls -lrth) file tnsname.ora
+
+=============================================================================================================
+Masukkan query:
+more file tnsname.ora
+
+Pastikan status sudah CONNECT
+tnsping <DATABASE>
+tnsping OPOPE
+
+=============================================================================================================
+Jika belum?
+1. Cek connection string di db asli (Prod)
+2. Cari dan masuk ke file tnsname.ora
+-Copy file tnsname DB yang dimaksud 
+-Paste file tnsname DB yang dimaksud ke server tujuan (Contoh dari exaimc ke DB DEV)
+3. echo $ORACLE_HOME
+4. Masuk ke file tnsname.ora
+vi tnsname.ora
+5. Paste file tnsname dan simpan
+6. Coba ulang tes koneksi dengan tnsping

@@ -1,0 +1,1 @@
+select instance_name,status,to_char (startup_time,'dd-mon-yyyy hh24:mi:ss') from gv$instance order by instance_name;

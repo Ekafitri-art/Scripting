@@ -1,0 +1,76 @@
+#Kill session inactive lebih dari 24 jam
+set pages 999
+set lines 999
+select 'alter system kill session '''||sid||','||serial#||',@'||inst_id||''' IMMEDIATE;' 
+from gv$session 
+--where username like 'DGPOS%' 
+--where last_call_et > (60*60*1/2)
+where sql_id='bzgtj4tk3tdga' 
+--and status = 'INACTIVE' 
+--and username ='DGPOS'
+order by inst_id;
+----------------------------
+over 30 minutes
+set pages 999
+set lines 999
+select 'ALTER SYSTEM KILL SESSION '''sid','serial#',@'inst_id''' IMMEDIATE;' FROM gv$session
+where username like 'PES_UAT12' 
+--where last_call_et > (60*30*1)
+--and status = 'INACTIVE' 
+--and username ='DGPOS'
+order by inst_id;
+======================================================
+kill session 12 jam by username
+
+select username, machine, status, count(*) FROM gv$session
+where
+last_call_et > (60*60*1)
+and status='INACTIVE'
+and username not in ('SYS','SYSTEM')
+group by status, machine, username;
+
+select 'ALTER SYSTEM KILL SESSION '''||sid||','||serial#||',@'||inst_id||''' IMMEDIATE;' FROM gv$session where username in ('TSEL_OIM') AND status = 'INACTIVE' AND last_call_et > (60*60*24);
+======================================================
+select 'ALTER SYSTEM KILL SESSION  '''||sid||','||serial#||',@'||inst_id||''' IMMEDIATE;' FROM gv$session
+where 
+--last_call_et > (60*60*60)
+--and status='INACTIVE'
+USERNAME in ('PES_UAT12');
+
+===========================================================================================================
+#Script_Buat_Kill blocking/locking session by holder
+SELECT 
+'alter system kill session ''' || SID || ',' || s.serial# || ',@'||inst_id||''';',sid,username,serial#,process,NVL (sql_id, 0),
+sql_address,blocking_session,wait_class,event,p1,p2,p3,seconds_in_wait
+FROM gv$session s WHERE blocking_session_status = 'VALID'
+OR sid IN (SELECT blocking_session
+FROM gv$session WHERE blocking_session_status = 'VALID');
+
+===========================================================================================================
+#script kill berdasarkan sql_id
+select 'ALTER SYSTEM KILL SESSION  '''||s.sid||','||s.serial#||',@'||s.inst_id||''' IMMEDIATE;'  FROM gv$session s, gv$lock l
+  WHERE EXISTS (SELECT 1 FROM gv$lock o WHERE o.lmode = 0 and o.id1 = l.id1 and o.id2 = l.id2 and o.type in ('TM','TX'))
+  and l.inst_id = s.inst_id
+  and l.sid = s.sid
+  and s.sql_id='5hxkgq2mcu336';
+  and s.status='INACTIVE';
+  
+  
+select 'ALTER SYSTEM KILL SESSION  '''||s.sid||','||s.serial#||',@'||s.inst_id||''' IMMEDIATE;'  FROM gv$session s, gv$lock l
+  WHERE EXISTS (SELECT 1 FROM gv$lock o WHERE o.lmode = 0 and o.id1 = l.id1 and o.id2 = l.id2 and o.type in ('TM','TX'))
+  and l.inst_id = s.inst_id
+  and l.sid = s.sid
+  and s.sql_id in ('0q6drpssahu9n');
+  and s.status='ACTIVE';
+  
+=====================================================================
+select 'ALTER SYSTEM KILL SESSION  '''||a.sid||','||a.serial#||',@'||a.inst_id||''' IMMEDIATE;' FROM gv$session a,gv$sqlarea b where 
+a.sql_address=b.address
+and a.sql_hash_value=b.hash_value 
+and b.sql_id='du8gb5kbhv19g';
+--and last_call_et > (60*60*24);
+
+=====================================================================
+Kill backup
+Mas Slamet Oracle, [4/17/2022 5:50 AM]
+select 'alter system kill session '''sid','serial#''' immediate;' from gv$session where username is not null and program like 'rman%';

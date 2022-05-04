@@ -1,0 +1,15 @@
+set lines 999
+set lines 999
+col segment_name for a35
+col owner for a35
+col table_name for a32
+select  a.owner, a.tablespace_name, a.segment_type, b.segment_name,b.table_name,sum(bytes/1024/1024) MB 
+from dba_segments a, dba_lobs b
+where a.segment_name=b.segment_name
+--and a.owner in ('TELKOMSEL')
+--and a.tablespace_name in ('DATA')
+and a.segment_type in ('LOBSEGMENT')
+--and b.table_name in ('TRACE_LOG')
+and b.segment_name in ('IFM_TRC_REPOSITORY')
+group by a.owner, a.tablespace_name, b.segment_name, a.segment_type, b.table_name
+order by a.segment_type, b.segment_name;

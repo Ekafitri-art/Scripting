@@ -1,0 +1,15 @@
+select sum(bytes)/1024/1024 Megabytes from dba_segments where owner like 'sit11_oms_user';
+
+select OWNER,sum(bytes)/1024/1024/1000 “SIZE_IN_GB” from dba_segments where owner like 'MRA_STAGING';
+
+===========================================================
+select sum(bytes/1024/1024/1024) "Segment GB" from dba_segments;
+select sum(bytes/1024/1024/1024) "Datafiles GB" from dba_data_files;
+
+select OWNER,sum(bytes)/1024/1024/1000 SIZE_IN_GB from dba_segments group by owner order by owner;
+
+select owner, segment_name, bytes/1024/1024 mb from dba_segments where segment_name in ('DBMS_CRYPTO','DBMS_CRYPTO_FFI','CRYPTO_TOOLKIT_LIBRARY','DBMS_CRYPTO_TOOLKIT_FFI','XKRBMSFT');
+
+select owner, segment_name, bytes/1024/1024 mb from dba_segments where owner in ('DATA_MODEL','DATA_MODEL_RELATION', 'SERVER_CACHE');
+
+select owner,segment_name, bytes/1024/1024 mb from dba_segments where owner like 'SYS' and segment_name like '%AUD$%';

@@ -1,0 +1,33 @@
+hostname
+date
+ps -ef | grep pmon | sort -k8
+ps -ef | grep pmon | sort -k8 | wc -l
+ps -ef | grep inherit
+. .grid_profile
+crsctl stat res -t
+crsctl stat res -t | wc -l
+asmcmd lsdg
+lsnrctl status
+lsnrctl status | wc -l
+df -hP
+srvctl status scan_listener
+crsctl query css votedisk
+cd /u01/app/agent13c/agent_13.4.0.0.0/bin/
+
+ps -ef | grep agent
+cd /u01/app/agent13c/
+cd agent_13.3.0.0.0
+cd bin
+
+./emctl status agent
+sqlplus / as sysdba
+set linesize 300 
+  set pagesize 200 
+  col path for a60
+  select group_number,disk_number, name, os_mb,total_mb, free_mb, path, header_status,mode_status 
+from v$asm_disk ;
+
+sqlplus / as sysasm
+  set linesize 200
+  set pages 99
+  select * from gv$asm_operation;

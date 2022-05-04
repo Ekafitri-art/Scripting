@@ -1,0 +1,56 @@
+Select   ddf.TABLESPACE_NAME "TABLESPACE",
+         ddf.MAXBYTES "MAXSIZE (MB)",
+         (ddf.BYTES - dfs.bytes) "USED (MB)",
+         ddf.MAXBYTES-(ddf.BYTES - dfs.bytes) "FREE (MB)",
+         round(((ddf.BYTES - dfs.BYTES)/ddf.MAXBYTES)*100,2) "USED %"
+from    (select TABLESPACE_NAME,
+         round(sum(BYTES)/1024/1024,2) bytes,
+         round(sum(decode(autoextensible,'NO',BYTES,MAXBYTES))/1024/1024,2) maxbytes
+         from   dba_data_files
+         group  by TABLESPACE_NAME) ddf,
+        (select TABLESPACE_NAME,
+                round(sum(BYTES)/1024/1024,2) bytes
+         from   dba_free_space
+         group  by TABLESPACE_NAME) dfs
+where    ddf.TABLESPACE_NAME=dfs.TABLESPACE_NAME 
+order by "USED %" ASC ;
+set linesize 900
+COLUMN recovery_file_dest FORMAT a30                  HEADING 'Recovery File Dest'
+COLUMN space_limit        FORMAT 999,999              HEADING 'Space Limit GB'
+COLUMN space_used         FORMAT 999,999              HEADING 'Space Used GB'
+COLUMN space_used_pct     FORMAT 999.99               HEADING '% Used'
+COLUMN space_reclaimable  FORMAT 99,999,999,999,999   HEADING 'Space Reclaimable'
+COLUMN pct_reclaimable    FORMAT 999.99               HEADING '% Reclaimable'
+COLUMN number_of_files    FORMAT 999,999              HEADING 'Number of Files'
+SELECT name recovery_file_dest, 
+space_limit / 1024 / 1024 / 1024 space_limit_GB, 
+space_used / 1024 / 1024 / 1024 space_used_GB, 
+ROUND((space_used / space_limit)*100, 2) space_used_pct, 
+space_reclaimable space_reclaimable, 
+ROUND((space_reclaimable / space_limit)*100, 2) pct_reclaimable, 
+number_of_files number_of_files
+FROM v$recovery_file_dest;
+set lines 500
+set pages 500
+COLUMN sid FORMAT 9999
+COLUMN serial# FORMAT 9999999
+COLUMN machine FORMAT A32
+COLUMN progress_pct FORMAT 99999999.00
+COLUMN elapsed FORMAT A10
+COLUMN remaining FORMAT A10
+col MESSAGE for a85
+SELECT s.sid,
+       s.serial#,
+       s.machine,
+     sl.message,
+       ROUND(sl.elapsed_seconds/60) || ':' || MOD(sl.elapsed_seconds,60) elapsed,
+       ROUND(sl.time_remaining/60) || ':' || MOD(sl.time_remaining,60) remaining,
+       ROUND(sl.sofar/sl.totalwork*100, 2) progress_pct
+FROM   gv$session s,
+       gv$session_longops sl
+WHERE  s.sid     = sl.sid
+AND    s.serial# = sl.serial#
+and sl.totalwork>sl.sofar;
+select name, database_role from v$database;
+!hostname;date
+!tail nohup.out

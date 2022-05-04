@@ -1,0 +1,40 @@
+select a.obj#, b.object_name, b.owner, b.object_type, b.timestamp
+    from dba_hist_seg_stat a, dba_objects b
+    where a.obj# = b.object_id
+    and   b.owner = 'TSEL_BUOPSUSER '
+    --and object_name in ('DBMS_LOCK')
+order by timestamp desc;
+
+SYS.dbms_lock
+SYS.DBMS_LOCK
+=============================================================================================================
+
+set lines 300
+col object_name for a32
+col owner for a32
+col object_type for a32
+col timestamp for a32
+select a.obj#, b.object_name, b.owner, b.object_type, b.timestamp
+    from dba_hist_seg_stat a, dba_objects b
+    where a.obj# = b.object_id
+    and   b.owner = 'APPS'
+    and object_name in ('PURCHASE_HISTORY','PURCHASE_HISTORY_SPEC','RECHARGE_HISTORY')
+order by timestamp desc;
+----------------------------------------
+Cek owner object/table
+
+set lines 999
+set pages 999
+col owner for a32
+col object_name for a32
+col object_type for a32
+select owner,object_name, object_type,STATUS LAST_DDL_TIME from dba_objects where object_type in ('JOB') and status in ('EXPTEST');
+ group by owner,object_name, object_type,LAST_DDL_TIME ;
+
+=============================================================================================================
+Cek object procedure
+select OWNER, object_name, OBJECT_TYPE from dba_objects where owner like 'APPS';
+
+select OWNER, object_name, OBJECT_TYPE from dba_objects where object_name in ('WAY_LAR_VIEW','WAY_DO_VIEW','WAY_SO_VIEW','TCHLR006V');
+
+select OWNER, object_name, OBJECT_TYPE from dba_objects where tablespace like 'CC_MAIN';

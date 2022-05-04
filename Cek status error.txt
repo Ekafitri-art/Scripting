@@ -1,0 +1,5 @@
+set lines 999
+set pages 999
+col name for a32
+col error_msg for a45
+select user_id, session_id, instance_id, status, name, error_msg, start_time, suspend_time, resume_time from dba_resumable;
